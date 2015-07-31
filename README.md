@@ -4,7 +4,7 @@ MultiSelectController is useful for making multiple selection with see selection
 
 ## Screenshot
 
-![Example](https://raw.githubusercontent.com/Darshanptl7500/DPParallaxCell/master/Screenshot/example.png)
+![1](https://raw.githubusercontent.com/Darshanptl7500/MultiSelectController/master/Screenshots/1.png)![2](https://raw.githubusercontent.com/Darshanptl7500/MultiSelectController/master/Screenshots/2.png)
 
 ##How To Use
 
