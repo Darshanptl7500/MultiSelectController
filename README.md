@@ -41,6 +41,9 @@ you can see example  for more understanding.
 
  - iOS 7.0+
 
+##Android
+
+- Please check [FilterSelectorListView](https://github.com/pchauhan/FilterSelectorListView) for android
 
 ##License
 The MIT License (MIT)
