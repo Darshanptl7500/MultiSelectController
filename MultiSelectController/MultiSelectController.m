@@ -46,31 +46,39 @@
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+
     self.automaticallyAdjustsScrollViewInsets = NO;
     self.arrSelected = [[NSMutableArray alloc] init];
-    
+
     if (!self.multiSelectCellBackgroundColor) {
-    
+
         self.multiSelectCellBackgroundColor = [UIColor colorWithRed:52.0/255.0 green:152.0/255.0 blue:219.0/255.0 alpha:1.0];
     }
-    
+
     if (!self.tableTextColor) {
-        
+
         self.tableTextColor = [UIColor blackColor];
-        
+
     }
-    
+
     if (!self.multiSelectTextColor) {
-        
+
         self.multiSelectTextColor = [UIColor whiteColor];
     }
-    
-    
-    
+
+
+
     [self navigationBarSetup];
     [self collectionViewInitializations];
     // Do any additional setup after loading the view from its nib.
+}
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+
+    [self.arrSelected removeAllObjects];
+    [self.multiSelectCollectionView reloadData];
+
+    self.delegate = nil;
 }
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -78,74 +86,74 @@
 }
 -(void)navigationBarSetup
 {
-    
+
     if (!self.leftButtonTextColor) {
-        
+
         self.leftButtonTextColor = [UIColor blackColor];
     }
-    
-    
+
+
     if (!self.rightButtonTextColor) {
-        
+
         self.rightButtonTextColor = [UIColor blackColor];
     }
-    
-    
+
+
     if (!self.rightButtonText) {
-        
+
         self.rightButtonText = @"Apply";
     }
-    
-    
+
+
     if (!self.leftButtonText) {
-        
-        
+
+
         self.leftButtonText = @"Cancel";
     }
-    
+
     NSDictionary * navBarTitleTextAttributes =
     @{ NSForegroundColorAttributeName : [UIColor blackColor],
        NSFontAttributeName            : [UIFont systemFontOfSize:16.0] };
-    
+
     self.navigationController.navigationBar.titleTextAttributes = navBarTitleTextAttributes;
-    
+
     self.navigationItem.title = @"Select";
     [self.navigationController.navigationBar setBarTintColor:[UIColor whiteColor]];
-    
-    
+
+
     UIBarButtonItem *spacer = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
     spacer.width = -10; // for example shift right bar button to the right
-    
-    
+
+
     UIButton *btnCancel =[UIButton buttonWithType:UIButtonTypeCustom];
     btnCancel.frame= CGRectMake(0, 0, 70, 32);
     [btnCancel setTitle:self.leftButtonText forState:UIControlStateNormal];
     [btnCancel setTitleColor:self.leftButtonTextColor forState:UIControlStateNormal];
     [btnCancel addTarget:self action:@selector(btnCancelTapped:) forControlEvents:UIControlEventTouchUpInside];
-    
-    
+
+
     UIBarButtonItem *barCancel =[[UIBarButtonItem alloc] initWithCustomView:btnCancel];
     self.navigationItem.leftBarButtonItems = @[spacer,barCancel];
-    
-    
+
+
     UIBarButtonItem *spacera = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
     spacera.width = -15; // for example shift right bar button to the right
-    
+
     UIButton *btnApply =[UIButton buttonWithType:UIButtonTypeCustom];
     btnApply.frame= CGRectMake(0, 0, 70, 32);
     [btnApply setTitle:self.rightButtonText forState:UIControlStateNormal];
     [btnApply setTitleColor:self.rightButtonTextColor forState:UIControlStateNormal];
     [btnApply addTarget:self action:@selector(btnApplyTapped:) forControlEvents:UIControlEventTouchUpInside];
-    
-    
-    
+
+
+
     UIBarButtonItem *barApply =[[UIBarButtonItem alloc] initWithCustomView:btnApply];
     self.navigationItem.rightBarButtonItems = @[spacera,barApply];
-    
-    
-    
-    
-    
+
+
+
+
+
 }
 -(void)collectionViewInitializations
 {
@@ -155,23 +163,23 @@
     [flowLayout setMinimumLineSpacing:0.0];
     [flowLayout setScrollDirection:UICollectionViewScrollDirectionVertical];
     [self.multiSelectCollectionView setCollectionViewLayout:flowLayout];
-    
+
    // [self.multiSelectCollectionView registerClass:[MultiSelectCell class] forCellWithReuseIdentifier:@"MultiSelectCell"];
-    
+
 }
 -(void)updateViewConstraints
 {
     [super updateViewConstraints];
-    
+
     if ([self.arrSelected count]!=0) {
-        
+
         self.topLayoutConstraint.constant = 68;
-        
+
     }else
     {
         self.topLayoutConstraint.constant = 0;
     }
-    
+
 }
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
@@ -185,20 +193,20 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     static NSString *CellIdentifier = @"Cell";
-    
+
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] ;
     }
-    
+
     cell.textLabel.text = self.arrOptions[indexPath.row];
     cell.textLabel.textColor = self.tableTextColor;
     cell.backgroundColor = [UIColor clearColor];
     cell.tintColor = self.multiSelectCellBackgroundColor;
     if ([self.arrSelected containsObject:self.arrOptions[indexPath.row]]) {
-        
+
         cell.accessoryType = UITableViewCellAccessoryCheckmark;
-        
+
     }else
     {
         cell.accessoryType = UITableViewCellAccessoryNone;
@@ -208,27 +216,27 @@
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UITableViewCell *cell=[tableView cellForRowAtIndexPath:indexPath];
-    
+
     if (cell.accessoryType == UITableViewCellAccessoryCheckmark) {
-        
+
         cell.accessoryType = UITableViewCellAccessoryNone;
-        
+
         [self.arrSelected removeObject:self.arrOptions[indexPath.row]];
         [self.multiSelectCollectionView reloadData];
         [self.view setNeedsUpdateConstraints];
-        
-        
+
+
     }else
     {
         cell.accessoryType = UITableViewCellAccessoryCheckmark;
-        
+
         [self.arrSelected addObject:self.arrOptions[indexPath.row]];
         [self.multiSelectCollectionView reloadData];
-        
+
         [self.view setNeedsUpdateConstraints];
-        
+
     }
-    
+
 }
 -(NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
 {
@@ -236,12 +244,12 @@
 }
 -(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
-    
+
     return [self.arrSelected count];
 }
 -(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    
+
     MultiSelectCell *cell = (MultiSelectCell *)[collectionView dequeueReusableCellWithReuseIdentifier:@"MultiSelectCell" forIndexPath:indexPath];
     cell.delegate =self;
     cell.lblText.text = [self.arrSelected objectAtIndex:indexPath.row];
@@ -249,21 +257,24 @@
     cell.layer.cornerRadius = 3.0;
     cell.backgroundColor = self.multiSelectCellBackgroundColor;
     return cell;
-    
-}
 
+}
+- (void)collectionView:(UICollectionView *)collectionView didEndDisplayingCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    ((MultiSelectCell*)cell).delegate = nil;
+}
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    
+
     CGRect textRect = [[self.arrSelected objectAtIndex:indexPath.row]
                        boundingRectWithSize:CGSizeMake(320, 30)
                        options:NSStringDrawingUsesLineFragmentOrigin
                        attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:14.0]}
-                       
+
                        context:nil];
-    
+
     return CGSizeMake(textRect.size.width+32, 30);
-    
+
 }
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout minimumLineSpacingForSectionAtIndex:(NSInteger)section
 {
@@ -277,15 +288,15 @@
     [self.multiSelectCollectionView reloadData];
     [self.tblOptions reloadData];
     [self.view setNeedsUpdateConstraints];
-    
+
 }
 
 -(IBAction)btnCancelTapped:(id)sender
 {
     [self.navigationController dismissViewControllerAnimated:YES completion:^{
-        
+
         if ([self.delegate respondsToSelector:@selector(multiSelectControllerDidCancel:)]) {
-            
+
             [self.delegate multiSelectControllerDidCancel:self];
         }
     }];
@@ -293,11 +304,11 @@
 -(IBAction)btnApplyTapped:(id)sender
 {
     [self.navigationController dismissViewControllerAnimated:YES completion:^{
-        
+
         if ([self.delegate respondsToSelector:@selector(multiSelectController:didFinishPickingSelections:)]) {
-            
+
             [self.delegate multiSelectController:self didFinishPickingSelections:self.arrSelected];
-            
+
         }
     }];
 }
